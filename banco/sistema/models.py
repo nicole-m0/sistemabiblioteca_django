@@ -75,16 +75,20 @@ class AuthUserUserPermissions(models.Model):
 
 
 class Autor(models.Model):
-    id_autor = models.AutoField(primary_key=True, blank=True)
+    id_autor = models.AutoField(primary_key=True)
     nome = models.TextField()
 
     class Meta:
         managed = False
         db_table = 'autor'
 
+    def __str__(self):
+        return self.nome
+
+
 
 class Cadastro(models.Model):
-    id_cadastro = models.AutoField(primary_key=True, blank=True)
+    id_cadastro = models.AutoField(primary_key=True)
     login = models.TextField(unique=True)
     senha = models.TextField()
     data_cadastro = models.DateField()
@@ -150,7 +154,7 @@ class DjangoSession(models.Model):
 
 
 class Editora(models.Model):
-    id_editora = models.AutoField(primary_key=True, blank=True)
+    id_editora = models.AutoField(primary_key=True)
     nome = models.TextField()
     telefone = models.TextField(blank=True)
 
@@ -160,7 +164,7 @@ class Editora(models.Model):
 
 
 class Emprestimo(models.Model):
-    id_emprestimo = models.AutoField(primary_key=True, blank=True)
+    id_emprestimo = models.AutoField(primary_key=True)
     data_emprestimo = models.DateField()
     data_devolucao = models.DateField(blank=True)
     id_usuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='id_usuario')
@@ -171,17 +175,19 @@ class Emprestimo(models.Model):
 
 
 class ItemEmprestado(models.Model):
-    pk = models.CompositePrimaryKey('id_emprestimo', 'id_livro')
+    id = models.AutoField(primary_key=True)
     id_emprestimo = models.ForeignKey(Emprestimo, models.DO_NOTHING, db_column='id_emprestimo')
     id_livro = models.ForeignKey('Livro', models.DO_NOTHING, db_column='id_livro')
 
     class Meta:
         managed = False
         db_table = 'item_emprestado'
+        unique_together = (('id_emprestimo', 'id_livro'),)
+
 
 
 class Livro(models.Model):
-    id_livro = models.AutoField(primary_key=True, blank=True)
+    id_livro = models.AutoField(primary_key=True)
     titulo = models.TextField()
     isbn = models.TextField(unique=True, blank=True)
     ano_publicacao = models.IntegerField(blank=True)
@@ -194,17 +200,19 @@ class Livro(models.Model):
 
 
 class LivroAutor(models.Model):
-    pk = models.CompositePrimaryKey('id_livro', 'id_autor')
+    id = models.AutoField(primary_key=True)
     id_livro = models.ForeignKey(Livro, models.DO_NOTHING, db_column='id_livro')
     id_autor = models.ForeignKey(Autor, models.DO_NOTHING, db_column='id_autor')
 
     class Meta:
         managed = False
         db_table = 'livro_autor'
+        unique_together = (('id_livro', 'id_autor'),)
+
 
 
 class Multa(models.Model):
-    id_multa = models.AutoField(primary_key=True, blank=True)
+    id_multa = models.AutoField(primary_key=True)
     valor = models.FloatField()
     data = models.DateField()
     status = models.TextField()
@@ -216,7 +224,7 @@ class Multa(models.Model):
 
 
 class Usuario(models.Model):
-    id_usuario = models.AutoField(primary_key=True, blank=True)
+    id_usuario = models.AutoField(primary_key=True)
     nome = models.TextField()
     email = models.TextField(unique=True, blank=True)
     telefone = models.TextField(blank=True)
